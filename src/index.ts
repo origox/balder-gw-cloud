@@ -6,7 +6,6 @@ import * as process from 'process';
 
 const CMD_RE = /^ba-1\/type\/(.+)\/id\/(.+)\/evt\/(.+)\/fmt\/(.+)$/;
 
-
 // Load environment i.e .env file
 config();
 
@@ -21,6 +20,11 @@ const mqttConfig: MqttClientConfig = {
 // DB
 const fb = new FirebaseService(process.env.FIREBASEURL);
 fb.start();
+
+fb.addEventListener('sensor/switch0001/level', (val)  => {
+  console.log(`event trigger - send mqtt cmd, val:${val}`);
+  mqttClient.send('ba-1/type/actuator/id/switch0001/cmd/set/fmt/json', val);
+});
 
 // Create MQTT Client Interface
 const mqttClient = new MqttClient(mqttConfig);
@@ -41,3 +45,4 @@ mqttClient.on('mqtt_request', (topic, message) => {
   }
   fb.updateSensorData(match[2], pay.level, pay.scale ? pay.scale : 'n/a', pay.ts);
 });
+

@@ -36,7 +36,7 @@ export class FirebaseService {
     const ref = this.db.ref();
     const clientsRef = ref.child(`sensor/${id}`);
 
-    clientsRef.update({ 
+    clientsRef.update({
       level: level,
       scale: scale,
       time: time
@@ -77,6 +77,13 @@ export class FirebaseService {
     updates[`/telemetry/${id}/${newTelemetryKey}`] = telemetryData;
 
     ref.update(updates);
+  }
+
+  public addEventListener(refs: string, callback: (a: any) => any) {
+    const listnerRef = this.db.ref(refs);
+    listnerRef.on('value', (snapshot) => {
+      callback(snapshot.val());
+    });
   }
 
 }
