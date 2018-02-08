@@ -43,12 +43,12 @@ export class FirebaseService {
     });
   }
 
-  public updateSensorData(id: string, level: string, scale: string, time: string) {
+  public updateSensorData(sensortype: string, id: string, level: string, scale: string, time: string) {
     const ref = this.db.ref();
     const updates = {};
 
     // filter for id === powermeter0001
-    if (id === 'powermeter0001' && (parseInt(time) - this.filter) < 60000) {
+    if (id === 'powermeter0001' && (parseInt(time) - this.filter) < 600000) {
       console.log(`filter too early - ${this.filter}`);
       return;
     } else if (id === 'powermeter0001') {
@@ -58,8 +58,10 @@ export class FirebaseService {
 
     // A sensor entry
     const sensorData = {
+      type: sensortype,
       level: level,
       scale: scale,
+      location: 'computer room',
       time: time
     };
 

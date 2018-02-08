@@ -21,6 +21,8 @@ const mqttConfig: MqttClientConfig = {
 const fb = new FirebaseService(process.env.FIREBASEURL);
 fb.start();
 
+// Handle actuators i.e. set from cloud/spa
+// TODO - need to refactor/generalize
 fb.addEventListener('sensor/switch0001/level', (val)  => {
   console.log(`event trigger - send mqtt cmd, val:${val}`);
   mqttClient.send('ba-1/type/actuator/id/switch0001/cmd/set/fmt/json', val);
@@ -43,6 +45,6 @@ mqttClient.on('mqtt_request', (topic, message) => {
     console.log(`cmd: type:${match[1]} id:${match[2]}, evt:${match[3]}, evt:${match[4]}`);
     console.log(`payload: level:${pay.level} scale:${pay.scale}, time:${pay.ts}`);
   }
-  fb.updateSensorData(match[2], pay.level, pay.scale ? pay.scale : 'n/a', pay.ts);
+  fb.updateSensorData(match[1], match[2], pay.level, pay.scale ? pay.scale : 'n/a', pay.ts);
 });
 
